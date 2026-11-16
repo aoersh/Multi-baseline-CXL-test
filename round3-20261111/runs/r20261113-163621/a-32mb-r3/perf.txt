@@ -1,0 +1,16 @@
+allocation: 7e9905c00000 bind:2 anon=8192 dirty=8192 active=6 N2=8192 kernelpagesize_kB=4
+loads=23527424 seconds=1.502 final_index=199851
+
+ Performance counter stats for 'numactl --physcpubind=0 --membind=2 /home/hjy/tools/experiments/cxl-tail-20261109/round3-20261111/pebs_probe --size-mb 32 1.5':
+
+     5,089,947,396      cycles                                                                
+       201,254,481      instructions                     #    0.04  insn per cycle            
+        23,612,206      LLC-loads                                                             
+            85,209      LLC-load-misses                  #    0.36% of all LL-cache accesses  
+
+       1.543017615 seconds time elapsed
+
+       1.517940000 seconds user
+       0.023983000 seconds sys
+
+

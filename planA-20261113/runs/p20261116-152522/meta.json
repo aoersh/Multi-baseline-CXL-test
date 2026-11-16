@@ -1,0 +1,36 @@
+{
+  "start": "2026-11-16T15:25:22+0800",
+  "reps": 1,
+  "ks": [
+    1
+  ],
+  "size_mb": 512,
+  "stride": 64,
+  "samples": 100000,
+  "paths": [
+    {
+      "name": "n2-local",
+      "cpu": 0,
+      "node": 2,
+      "load_cpus": "1,2,3,4"
+    },
+    {
+      "name": "n3-local",
+      "cpu": 16,
+      "node": 3,
+      "load_cpus": "17,18,19,20"
+    },
+    {
+      "name": "n2-cross",
+      "cpu": 16,
+      "node": 2,
+      "load_cpus": "1,2,3,4"
+    },
+    {
+      "name": "n3-cross",
+      "cpu": 0,
+      "node": 3,
+      "load_cpus": "17,18,19,20"
+    }
+  ]
+}

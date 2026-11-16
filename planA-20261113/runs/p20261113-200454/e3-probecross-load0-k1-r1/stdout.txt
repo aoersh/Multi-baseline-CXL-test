@@ -1,0 +1,7 @@
+# label /home/hjy/tools/experiments/cxl-tail-20261109/planA-20261113/runs/p20261113-200454/e3-probecross-load0-k1-r1/mc size_mb 4096 stride 64 k 1 nodes_per_ring 67108864 samples 943718 per_lane_samples 943718 tsc_ghz 2.299977
+# init_seconds 10.136
+# numa_maps:78a796265000 N2=131074
+# numa_maps:78a7b6600000 N2=1048576
+# window 1549511.116511364 1549511.967413744
+# measure_seconds 0.851 rounds 943718 total_accesses 943718 accesses_per_second 1109079 ns_per_access 901.65
+# summary rounds 943718 k 1 mean_round_cycles 2037.80 mean_round_ns 886.01 ns_per_access 886.01 sub32_pct 0.0000 max_round_cycles 104638

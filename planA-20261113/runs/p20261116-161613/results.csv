@@ -1,0 +1,13 @@
+accesses_per_second,cell,device,k,load_threads,mean_round_ns,mem0_casrd,mem1_casrd,ns_per_access,rep
+nan,e2b-n2-load0-r1,n2,8,0,453.62,0,0,56.7,1
+nan,e2b-n2-load1-r1,n2,8,1,607.63,0,0,75.95,1
+nan,e2b-n2-load2-r1,n2,8,2,969.08,0,0,121.13,1
+nan,e2b-n2-load4-r1,n2,8,4,1347.12,0,0,168.39,1
+nan,e2b-n2-load8-r1,n2,8,8,1669.24,0,0,208.66,1
+nan,e2b-n2-load16-r1,n2,8,16,4818.46,0,0,602.31,1
+nan,e2b-n3-load0-r1,n3,8,0,371.32,0,0,46.42,1
+nan,e2b-n3-load1-r1,n3,8,1,435.81,0,0,54.48,1
+nan,e2b-n3-load2-r1,n3,8,2,574.8,0,0,71.85,1
+nan,e2b-n3-load4-r1,n3,8,4,758.81,0,0,94.85,1
+nan,e2b-n3-load8-r1,n3,8,8,921.47,0,0,115.18,1
+nan,e2b-n3-load16-r1,n3,8,16,2627.42,0,0,328.43,1

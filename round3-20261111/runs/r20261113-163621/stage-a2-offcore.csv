@@ -1,0 +1,17 @@
+stage,size_mb,rep,chase_loads,l3_miss,miss_pct,hit_pct,predicted_hit_pct,note
+A2,32,1,24117248,131552,0.55,99.45,100.0,offcore demand_data_rd
+A2,32,2,24117248,28113,0.12,99.88,100.0,offcore demand_data_rd
+A2,64,1,18087936,1644093,9.09,90.91,100.0,offcore demand_data_rd
+A2,64,2,18087936,1530591,8.46,91.54,100.0,offcore demand_data_rd
+A2,96,1,6946816,2684191,38.64,61.36,75.0,offcore demand_data_rd
+A2,96,2,6946816,2674434,38.50,61.50,75.0,offcore demand_data_rd
+A2,128,1,5308416,2861044,53.90,46.10,56.2,offcore demand_data_rd
+A2,128,2,5308416,2886592,54.38,45.62,56.2,offcore demand_data_rd
+A2,192,1,4521984,3015700,66.69,33.31,37.5,offcore demand_data_rd
+A2,192,2,4521984,3053018,67.51,32.49,37.5,offcore demand_data_rd
+A2,256,1,4194304,3140686,74.88,25.12,28.1,offcore demand_data_rd
+A2,256,2,4194304,3157365,75.28,24.72,28.1,offcore demand_data_rd
+A2,384,1,3932160,3264037,83.01,16.99,18.8,offcore demand_data_rd
+A2,384,2,3932160,3306853,84.10,15.90,18.8,offcore demand_data_rd
+A2,512,1,3735552,3421091,91.58,8.42,14.1,offcore demand_data_rd
+A2,512,2,3735552,3406204,91.18,8.82,14.1,offcore demand_data_rd

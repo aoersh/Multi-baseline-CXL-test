@@ -1,0 +1,27 @@
+[E3] interference 2x2 (probe node2, load node0 vs node2)
+  e3-probelocal-load0-k1-r1          K=1    779.6 ns/acc place=OK
+  e3-probelocal-load0-k8-r1          K=8    131.0 ns/acc place=OK
+  e3-probelocal-load2-k1-r1          K=1   1565.1 ns/acc place=OK
+  e3-probelocal-load2-k8-r1          K=8    243.1 ns/acc place=OK
+  e3-probecross-load0-k1-r1          K=1    886.0 ns/acc place=OK
+  e3-probecross-load0-k8-r1          K=8    164.7 ns/acc place=OK
+  e3-probecross-load2-k1-r1          K=1   1539.0 ns/acc place=OK
+  e3-probecross-load2-k8-r1          K=8    292.3 ns/acc place=OK
+  e3-probelocal-load0-k1-r2          K=1    780.4 ns/acc place=OK
+  e3-probelocal-load0-k8-r2          K=8    131.4 ns/acc place=OK
+  e3-probelocal-load2-k1-r2          K=1   1601.6 ns/acc place=OK
+  e3-probelocal-load2-k8-r2          K=8    240.0 ns/acc place=OK
+  e3-probecross-load0-k1-r2          K=1    876.3 ns/acc place=OK
+  e3-probecross-load0-k8-r2          K=8    163.5 ns/acc place=OK
+  e3-probecross-load2-k1-r2          K=1   1539.5 ns/acc place=OK
+  e3-probecross-load2-k8-r2          K=8    291.2 ns/acc place=OK
+  e3-probelocal-load0-k1-r3          K=1    779.8 ns/acc place=OK
+  e3-probelocal-load0-k8-r3          K=8    131.6 ns/acc place=OK
+  e3-probelocal-load2-k1-r3          K=1   1609.3 ns/acc place=OK
+  e3-probelocal-load2-k8-r3          K=8    241.8 ns/acc place=OK
+  e3-probecross-load0-k1-r3          K=1    883.4 ns/acc place=OK
+  e3-probecross-load0-k8-r3          K=8    166.1 ns/acc place=OK
+  e3-probecross-load2-k1-r3          K=1   1533.8 ns/acc place=OK
+  e3-probecross-load2-k8-r3          K=8    288.5 ns/acc place=OK
+
+results: /home/hjy/tools/experiments/cxl-tail-20261109/planA-20261113/runs/p20261113-200454

@@ -1,0 +1,5 @@
+cell,k,load_cpus,mean_round_ns,mem0_casrd,mem1_casrd,memnode,ns_per_access,path,probe_cpu,rep
+e1b-n2-local-k1-r1,1,"1,2,3,4",1073.18,1303587,64,2,1073.18,n2-local,0,1
+e1b-n3-local-k1-r1,1,"17,18,19,20",654.87,21,1524390,3,654.87,n3-local,16,1
+e1b-n2-cross-k1-r1,1,"1,2,3,4",1344.22,1717635,96,2,1344.22,n2-cross,16,1
+e1b-n3-cross-k1-r1,1,"17,18,19,20",933.91,129,2175369,3,933.91,n3-cross,0,1

@@ -1,0 +1,17 @@
+# label /home/hjy/tools/experiments/cxl-tail-20261109/round2-20261113/runs/m20261113-142056/rt2-n2-local-s64-read4/chase size_mb 256 stride 64 nodes 4194304 tsc_ghz 2.299986
+# init_seconds 0.548
+# numa_maps:5aec464c0000 N2=1 kernelpagesize_kB=4
+# numa_maps:5aec464c1000 N2=1 kernelpagesize_kB=4
+# numa_maps:5aec7eff7000 N2=2 kernelpagesize_kB=4
+# numa_maps:7f4665a5d000 N2=8194 kernelpagesize_kB=4
+# numa_maps:7f4668200000 N2=65536 kernelpagesize_kB=4
+# numa_maps:7f4678416000 N2=4 kernelpagesize_kB=4
+# numa_maps:7f467841a000 N2=2 kernelpagesize_kB=4
+# numa_maps:7f467841c000 N2=5 kernelpagesize_kB=4
+# numa_maps:7f467855c000 N2=2 kernelpagesize_kB=4
+# numa_maps:7f4678573000 N2=1 kernelpagesize_kB=4
+# numa_maps:7f46785ad000 N2=2 kernelpagesize_kB=4
+# numa_maps:7f46785af000 N2=2 kernelpagesize_kB=4
+# numa_maps:7ffd6d8c0000 N2=4 kernelpagesize_kB=4
+# measure_seconds 2.120 access_per_second 943590
+# summary n 2000000 mean_cycles 2401.57 mean_ns 1044.17 sub32_pct 0.0503 max_cycles 2053814

@@ -1,0 +1,9 @@
+{
+  "start": "2026-11-13T14:13:59+0800",
+  "repeats": 3,
+  "samples": 2000000,
+  "trace_samples": 4000000,
+  "phase": "all",
+  "chase_sha": "0b7954115fc712b201ed70bccf82cacd9d19798c01ed7af552ee84c5c36c8f6d",
+  "mlc_sha": "bc347e01bec7ed66a2b37a1e0a7ea09ad30446bc66c4b32605e3928c7642ab05"
+}

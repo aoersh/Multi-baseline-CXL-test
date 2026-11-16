@@ -1,0 +1,7 @@
+# label /home/hjy/tools/experiments/cxl-tail-20261109/planA-20261113/runs/p20261113-193614/e2-n2-local-k2-r2/mc size_mb 4096 stride 64 k 2 nodes_per_ring 67108864 samples 943718 per_lane_samples 471859 tsc_ghz 2.299927
+# init_seconds 5.851
+# numa_maps:7ea134a65000 N2=131074
+# numa_maps:7ea154e00000 N2=1048576
+# window 1548102.069268348 1548102.327607911
+# measure_seconds 0.258 rounds 471859 total_accesses 943718 accesses_per_second 3653014 ns_per_access 273.75
+# summary rounds 471859 k 2 mean_round_cycles 1226.28 mean_round_ns 533.18 ns_per_access 266.59 sub32_pct 0.0000 max_round_cycles 100366

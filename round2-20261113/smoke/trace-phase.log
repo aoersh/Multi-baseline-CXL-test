@@ -1,0 +1,15 @@
+[trace] per-access timestamps for periodicity
+  trace n0-local     idle
+  trace n0-local     read4
+  trace n1-cross     idle
+  trace n1-cross     read4
+  trace n2-local     idle
+  trace n2-local     read4
+  trace n3-cross     idle
+  trace n3-cross     read4
+  trace n2-cross     idle
+  trace n2-cross     read4
+  trace n3-local     idle
+  trace n3-local     read4
+
+results: /home/hjy/tools/experiments/cxl-tail-20261109/round2-20261113/runs/m20261113-142056

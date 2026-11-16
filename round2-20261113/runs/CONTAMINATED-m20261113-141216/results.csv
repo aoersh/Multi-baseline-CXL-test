@@ -1,0 +1,7 @@
+cell,cpu,load,lowbin_pct,memnode,stride,tool,total
+hh-mlc-n0-local-r1,0,idle,4.396072274574392,0,0,mlc,32097152
+hh-mlc-n1-cross-r1,0,idle,12.69061104319795,1,0,mlc,12097148
+hh-mlc-n2-local-r1,0,idle,13.031418645121974,2,0,mlc,12097148
+hh-mlc-n3-cross-r1,0,idle,12.038456333802287,3,0,mlc,12097149
+hh-mlc-n2-cross-r1,16,idle,12.821605682197402,2,0,mlc,12097151
+hh-mlc-n3-local-r1,16,idle,12.447177649747642,3,0,mlc,12097152

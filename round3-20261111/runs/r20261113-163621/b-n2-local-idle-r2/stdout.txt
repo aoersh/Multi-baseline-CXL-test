@@ -1,0 +1,17 @@
+# label /home/hjy/tools/experiments/cxl-tail-20261109/round3-20261111/runs/r20261113-163621/b-n2-local-idle-r2/chase size_mb 4096 stride 4096 nodes 1048576 tsc_ghz 2.299994
+# init_seconds 2.398
+# numa_maps:56245fb8f000 N2=1 kernelpagesize_kB=4
+# numa_maps:56245fb90000 N2=1 kernelpagesize_kB=4
+# numa_maps:5624690bd000 N2=2 kernelpagesize_kB=4
+# numa_maps:700f0d131000 N2=2051 kernelpagesize_kB=4
+# numa_maps:700f0e400000 N2=1048576 kernelpagesize_kB=4
+# numa_maps:70100e616000 N2=4 kernelpagesize_kB=4
+# numa_maps:70100e61a000 N2=2 kernelpagesize_kB=4
+# numa_maps:70100e61c000 N2=5 kernelpagesize_kB=4
+# numa_maps:70100e6cb000 N2=2 kernelpagesize_kB=4
+# numa_maps:70100e6e2000 N2=1 kernelpagesize_kB=4
+# numa_maps:70100e71c000 N2=2 kernelpagesize_kB=4
+# numa_maps:70100e71e000 N2=2 kernelpagesize_kB=4
+# numa_maps:7ffd543d3000 N2=4 kernelpagesize_kB=4
+# measure_seconds 0.463 access_per_second 2036688
+# summary n 943718 mean_cycles 1084.81 mean_ns 471.66 sub32_pct 0.0006 max_cycles 87554

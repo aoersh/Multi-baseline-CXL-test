@@ -1,0 +1,7 @@
+# label /home/hjy/tools/experiments/cxl-tail-20261109/planA-20261113/runs/p20261113-200454/e3-probelocal-load2-k1-r3/mc size_mb 4096 stride 64 k 1 nodes_per_ring 67108864 samples 943718 per_lane_samples 943718 tsc_ghz 2.299975
+# init_seconds 12.763
+# numa_maps:78b0f0e65000 N2=131074
+# numa_maps:78b111200000 N2=1048576
+# window 1549734.726801190 1549736.260041831
+# measure_seconds 1.533 rounds 943718 total_accesses 943718 accesses_per_second 615505 ns_per_access 1624.68
+# summary rounds 943718 k 1 mean_round_cycles 3701.44 mean_round_ns 1609.34 ns_per_access 1609.34 sub32_pct 0.0000 max_round_cycles 182010

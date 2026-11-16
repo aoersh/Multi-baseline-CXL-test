@@ -1,0 +1,25 @@
+# Raw measurement samples — reproduce with the scripts, don't version them.
+# Total excluded: ~2.1 GB of per-access latency/timestamp binaries and perf traces.
+*.bin
+*.data
+
+# perf trace dumps from the sudo joint-capture session
+followup/raw/
+
+# Build artifacts and caches — rebuild with the commands in each README
+__pycache__/
+*.o
+*.so
+round3-20261111/chase
+round3-20261111/pebs_probe
+round3-20261111/msr_rw
+round2-20261113/chase
+round2-20261113/pebs_probe
+round2-20261113/msr_rw
+planA-20261113/multichase
+planA-20261113/multichase_dbg
+/pebs_probe
+
+# Any single file over ~50 MB is data, not source
+followup/raw/write4/scheduler.txt
+followup/raw/read4/scheduler.txt

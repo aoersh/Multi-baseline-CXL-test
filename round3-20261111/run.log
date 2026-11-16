@@ -1,0 +1,47 @@
+[A] L3 reuse sweep
+    32 MiB r1  hits=None%  predicted=100.0%
+    64 MiB r1  hits=None%  predicted=100.0%
+    96 MiB r1  hits=None%  predicted=75.0%
+   128 MiB r1  hits=None%  predicted=56.2%
+   192 MiB r1  hits=None%  predicted=37.5%
+   256 MiB r1  hits=None%  predicted=28.1%
+   384 MiB r1  hits=None%  predicted=18.8%
+   512 MiB r1  hits=None%  predicted=14.1%
+    32 MiB r2  hits=None%  predicted=100.0%
+    64 MiB r2  hits=None%  predicted=100.0%
+    96 MiB r2  hits=None%  predicted=75.0%
+   128 MiB r2  hits=None%  predicted=56.2%
+   192 MiB r2  hits=None%  predicted=37.5%
+   256 MiB r2  hits=None%  predicted=28.1%
+   384 MiB r2  hits=None%  predicted=18.8%
+   512 MiB r2  hits=None%  predicted=14.1%
+    32 MiB r3  hits=None%  predicted=100.0%
+    64 MiB r3  hits=None%  predicted=100.0%
+    96 MiB r3  hits=None%  predicted=75.0%
+   128 MiB r3  hits=None%  predicted=56.2%
+   192 MiB r3  hits=None%  predicted=37.5%
+   256 MiB r3  hits=None%  predicted=28.1%
+   384 MiB r3  hits=None%  predicted=18.8%
+   512 MiB r3  hits=None%  predicted=14.1%
+[B] cold-access tail (ring 4096 MiB, stride 4096)
+  ring nodes=1,048,576 samples=943,718 (90% of one pass)
+  n2-local  idle  r1 mean=468.15 ns sub32=0.0007%
+  n2-local  read4 r1 mean=1848.10 ns sub32=0.0006%
+  n2-cross  idle  r1 mean=875.29 ns sub32=0.0007%
+  n2-cross  read4 r1 mean=1439.52 ns sub32=0.0006%
+  n3-cross  idle  r1 mean=830.32 ns sub32=0.0005%
+  n3-cross  read4 r1 mean=1090.32 ns sub32=0.0006%
+  n2-local  idle  r2 mean=471.66 ns sub32=0.0006%
+  n2-local  read4 r2 mean=1850.59 ns sub32=0.0007%
+  n2-cross  idle  r2 mean=874.41 ns sub32=0.0007%
+  n2-cross  read4 r2 mean=1414.16 ns sub32=0.0006%
+  n3-cross  idle  r2 mean=824.34 ns sub32=0.0006%
+  n3-cross  read4 r2 mean=1086.94 ns sub32=0.0007%
+  n2-local  idle  r3 mean=472.58 ns sub32=0.0007%
+  n2-local  read4 r3 mean=1847.31 ns sub32=0.0007%
+  n2-cross  idle  r3 mean=867.06 ns sub32=0.0006%
+  n2-cross  read4 r3 mean=1419.66 ns sub32=0.0007%
+  n3-cross  idle  r3 mean=825.59 ns sub32=0.0007%
+  n3-cross  read4 r3 mean=1087.33 ns sub32=0.0005%
+
+results: /home/hjy/tools/experiments/cxl-tail-20261109/round3-20261111/runs/r20261113-163621

@@ -1,0 +1,9 @@
+{
+  "start": "2026-11-13T16:36:21+0800",
+  "repeats": 3,
+  "stage": "all",
+  "size_mb": 4096,
+  "stride": 4096,
+  "chase_sha": "0b7954115fc712b201ed70bccf82cacd9d19798c01ed7af552ee84c5c36c8f6d",
+  "probe_sha": "9c3eb7eb5e0cdaec9f1e4d3e153ec2e402e65b700d60f2ce39ef0ab92c63f9d1"
+}

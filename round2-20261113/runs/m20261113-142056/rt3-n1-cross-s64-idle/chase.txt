@@ -1,0 +1,17 @@
+# label /home/hjy/tools/experiments/cxl-tail-20261109/round2-20261113/runs/m20261113-142056/rt3-n1-cross-s64-idle/chase size_mb 256 stride 64 nodes 4194304 tsc_ghz 2.299926
+# init_seconds 0.415
+# numa_maps:61b96721d000 N1=1 kernelpagesize_kB=4
+# numa_maps:61b96721e000 N1=1 kernelpagesize_kB=4
+# numa_maps:61b98fb03000 N1=2 kernelpagesize_kB=4
+# numa_maps:771f08e5d000 N1=8194 kernelpagesize_kB=4
+# numa_maps:771f0b600000 N1=65536 kernelpagesize_kB=4
+# numa_maps:771f1b816000 N1=4 kernelpagesize_kB=4
+# numa_maps:771f1b81a000 N1=2 kernelpagesize_kB=4
+# numa_maps:771f1b81c000 N1=5 kernelpagesize_kB=4
+# numa_maps:771f1b9dd000 N1=2 kernelpagesize_kB=4
+# numa_maps:771f1b9f4000 N1=1 kernelpagesize_kB=4
+# numa_maps:771f1ba2e000 N1=2 kernelpagesize_kB=4
+# numa_maps:771f1ba30000 N1=2 kernelpagesize_kB=4
+# numa_maps:7ffff84b8000 N1=4 kernelpagesize_kB=4
+# measure_seconds 0.889 access_per_second 2250379
+# summary n 2000000 mean_cycles 987.61 mean_ns 429.41 sub32_pct 0.0520 max_cycles 510412
