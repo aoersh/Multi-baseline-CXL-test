@@ -311,7 +311,13 @@ via `/proc/self/numa_maps` (every cell reports zero off-node pages).
 
 ### 4.1 Idle: the link gap is modest
 
-Single-access and multi-chain latency, no competing load:
+![Per-access cost against probe concurrency, idle.](figures/fig2-latency-vs-k.svg)
+
+*Figure 1: Per-access cost versus probe concurrency K, no competing load, for
+the two CXL devices and local DRAM. The Gen4/Gen5 gap is a consistent ~20%
+across the whole range, and both CXL curves remain far above DRAM at every K.*
+
+Single-access and multi-chain latency with no competing load (Figure 1):
 
 | Path | K=1 | K=2 | K=4 | K=8 | K=16 | K=32 |
 |---|---:|---:|---:|---:|---:|---:|
@@ -334,9 +340,19 @@ MLP and the fixed component dominates less.
 
 ### 4.2 Under load: the gap grows to 82.9%
 
+![Link-speed gap versus competing load. Both probes agree to within 1-5
+percentage points up to 8 load threads, then diverge — the K=8 plateau is a
+property of the probe, not of the device.](figures/fig1-linkgap-vs-load.svg)
+
+*Figure 2: Link-speed gap (node2 Gen4 vs node3 Gen5, same socket, same CPU)
+against the number of competing threads. Idle, the gap is 18.5%; at eight
+threads, 82.9%; at sixteen threads, 125.7%. The dashed grey line marks the idle
+value.*
+
 We sweep the number of competing threads on the same socket as the device under
-test, with the probe at K = 8. The CXL PMU records device read commands for
-each cell so that the two sides can be shown to receive comparable traffic:
+test, with the probe at K = 8 (Figure 2). The CXL PMU records device read
+commands for each cell so that the two sides can be shown to receive comparable
+traffic:
 
 | Load threads | mem0 (Gen4) | mem1 (Gen5) | Gap | device reads mem0 | mem1 |
 |---:|---:|---:|---:|---:|---:|
@@ -407,11 +423,17 @@ magnitude by 4.5× to 6×, and the misstatement begins at two threads.**
 
 ### 4.3 Interference domain, not NUMA distance
 
+![Same-device competition versus cross-socket access, K=1.](figures/fig3-interference.svg)
+
+*Figure 3: Interference decomposition. Moving the competing load onto the device
+under test costs 812 ns; moving the probe to the other socket costs 102 ns — an
+8× difference.*
+
 Round-1 experiments (reported separately) showed local accesses degrading more
 than cross-socket ones under load — the reverse of the NUMA heuristic. We
-decompose that with a 2×2 design: probe accessing node 2 from CPU 0 (local) or
-CPU 16 (cross), load targeting node 0 (different device) or node 2 (same
-device), all on socket 0 cores.
+decompose that with a 2×2 design (Figure 3): probe accessing node 2 from CPU 0
+(local) or CPU 16 (cross), load targeting node 0 (different device) or node 2
+(same device), all on socket 0 cores.
 
 | Probe | load → node0 | load → node2 | same-device effect |
 |---|---:|---:|---:|
