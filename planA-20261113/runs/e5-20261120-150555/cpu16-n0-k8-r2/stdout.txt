@@ -1,0 +1,7 @@
+# label /home/hjy/tools/experiments/cxl-tail-20261109/planA-20261113/runs/e5-20261120-150555/cpu16-n0-k8-r2/mc size_mb 4096 stride 64 k 8 nodes_per_ring 67108864 samples 943718 per_lane_samples 117964 tsc_ghz 2.299961
+# init_seconds 8.332
+# numa_maps:7e5401a65000 N0=131074
+# numa_maps:7e5421e00000 N0=1048576
+# window 2136410.794146563 2136410.903434406
+# measure_seconds 0.109 rounds 117964 total_accesses 943712 accesses_per_second 8635105 ns_per_access 115.81
+# summary rounds 117964 k 8 mean_round_cycles 2096.26 mean_round_ns 911.43 ns_per_access 113.93 sub32_pct 0.0000 max_round_cycles 1318786

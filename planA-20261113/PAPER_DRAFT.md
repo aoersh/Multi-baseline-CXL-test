@@ -1,4 +1,4 @@
-# Silent Link Degradation in CXL Memory: Why Idle-Latency Evaluation Underestimates Its Cost by 4.5–6×
+# Silent Link Degradation in CXL Memory: Idle-Latency Evaluation Misstates Its Cost
 
 *Draft v1 — 2026-11-17. Target: ICPE (ACM SIGMETRICS).*
 
@@ -8,27 +8,31 @@
 
 CXL memory devices are routinely evaluated with idle-latency microbenchmarks,
 and link-width and link-speed decisions are justified with the resulting
-numbers. We show that this practice systematically underestimates the cost of a
-degraded link, by a factor of 4.5 to 6.
-
-On a dual-socket Granite Rapids server we found two CXL memory devices of
-identical model, identical firmware, and adjacent serial numbers whose PCIe
+numbers. On a dual-socket Granite Rapids server we found two CXL memory devices
+of identical model, identical firmware, and adjacent serial numbers whose PCIe
 links trained at different speeds: 16 GT/s (Gen4) and 32 GT/s (Gen5). Both
 endpoints advertise 32 GT/s capability, the operating system requests 32 GT/s
 (`Target Link Speed`), and no AER error is recorded on either link. The
-degradation is silent.
+degradation is invisible to error counters, though it is visible if one compares
+negotiated speed against advertised capability.
 
-Measured with a dependency-chain probe, the two devices differ by 18.5% at zero
-load. Under eight threads of competing traffic on the same socket, they differ
-by 82.9%; under sixteen, by 125.7%. The crossing point is between two and four
-load threads. Using idle latency to decide between Gen4 and Gen5 therefore
-misstates the benefit of the wider link by a factor of 4.5 to 6 in exactly the
-regime where a memory device is expected to earn its keep.
+We measure both devices with a dependency-chain probe at controlled concurrency.
+At zero load the slower device costs 18.5% more per access. The gap grows
+monotonically once competing traffic is applied, reaching 82.9% at eight load
+threads and 125.7% at sixteen — measured on two probe configurations, whose
+curves agree to within 1–5 percentage points up to eight load threads. A single
+competing thread is already enough to double the idle gap.
 
-We present the instrument, validate that its concurrency control is sound
-(a null-hypothesis test confirms that K interleaved chains really do sustain K
-in-flight loads for K ≤ 8), and report five measurement pitfalls that each
-produced a qualitatively wrong conclusion before being corrected.
+We define cost three ways and report all three, because they disagree by 6×.
+Ratio of gaps: 4.5× at eight threads, 6.2× at sixteen. Ratio of absolute
+per-access penalties: 9.8×. Ratio of latency ratios: 1.54×. Which one is
+"the" cost depends on what the deployment optimises, and we state that
+explicitly rather than picking the largest.
+
+We also report five measurement pitfalls that each inverted a conclusion before
+being corrected, and a control experiment showing that the two sockets are
+equivalent for local DRAM access (−0.8 ns), so the device gap is not a socket
+artefact.
 
 ---
 
@@ -59,20 +63,27 @@ Contributions:
 1. **A silent degradation in the wild (§2.3).** One of two otherwise identical
    CXL devices trains at Gen4 while the system requests Gen5. Capability is
    advertised, the target rate is set, and zero correctable errors are logged.
-   Nothing in a standard health check reveals it.
+   No error counter or health check reveals it; only comparing negotiated speed
+   against advertised capability does.
 
-2. **The cost is load-dependent, by 4.5× to 6× (§4.2).** Idle, the gap is
-   18.5%. At eight competing threads it is 82.9%; at sixteen, 125.7%. The
-   crossing point is at two to four threads, so a lightly loaded system already
-   gives the wrong answer.
+2. **The cost is load-dependent, and one competing thread is enough (§4.2).**
+   Idle, the gap is 18.5%. A single load thread already doubles it, to 38.6%.
+   At eight threads it is 82.9%; at sixteen, 125.7%. The magnitude of the
+   effect depends on how "cost" is defined, and we report three definitions
+   that differ by up to 6× (§4.2.1).
 
-3. **An interference-domain decomposition (§4.3).** Competing traffic on the
-   *same device* costs 8× more than moving the probe to another socket. The
-   variable that matters is not NUMA distance but whether the interference
-   domain overlaps.
+3. **An interference-domain decomposition, and its failure to generalise
+   (§4.3).** Competing traffic on the *same device* costs more than moving the
+   probe to another socket on node 2 (6.4–8.0×), but the ratio inverts on
+   node 3 (0.7–1.5×). We report both and withdraw the general claim: the sign
+   of the effect is robust, its magnitude is not.
 
-4. **A validated concurrency instrument (§3) and five pitfalls (§3.5).**
-   Five measurement artefacts each inverted our conclusion before we found
+4. **Socket asymmetry ruled out (§4.5).** A symmetric DRAM control across both
+   sockets shows the two are equivalent for local access (−0.8 ns, −0.4%), so
+   the measured device gap is not a socket artefact.
+
+5. **A validated concurrency instrument (§3) and four pitfalls (§3.5).**
+   Four measurement artefacts each inverted our conclusion before we found
    them. We document them with dose-response evidence, because the same
    artefacts are latent in any dependency-chain measurement.
 
@@ -285,7 +296,12 @@ restored the expected monotonic fall: 99.5% at 32 MiB down to 8.4% at 512 MiB.
 **(P3) Ring reuse.** With a 256 MiB ring walked repeatedly, L3 (72 MiB) holds
 roughly a quarter of it, so a quarter of "cold" accesses actually hit L3.
 Against a genuine cold baseline (4 GiB ring, single pass, fast-mode fraction
-0.00–0.04%) the earlier means are low by 9–13% (mem0 local: 342.8 → 470.8 ns).
+0.00–0.04%) the earlier means are low: mem0 local reads 342.8 ns instead of
+470.8 ns, i.e. **27.2% low**.
+
+This is a separate bias from P1 and must not be added to it. The two compound
+but are not additive: P1 (block-internal reuse inside MLC) affects MLC's
+numbers, P3 (ring reuse in our own probe) affects ours.
 
 **(P4) Mismatched load placement.** In our first loaded experiment the load
 threads were pinned to CPUs 1–4 (socket 0) for every path. For node 3 that made
@@ -367,9 +383,67 @@ Repeat-to-repeat spread is 0.4–3.7%. Device read counts match within 12–15% 
 every load level, and the residual asymmetry favours mem1 (the Gen5 side sees
 slightly *more* traffic), so the gap is a conservative estimate.
 
+### 4.2.1 What "cost" means
+
+The phrase "the cost of the slower link" is ambiguous, and the three plausible
+readings differ by 6×. We state the definition we use and report the others, so
+that no single choice can be mistaken for the whole result.
+
+**(i) Ratio of gaps** — how much larger the relative deficit becomes. This is
+the headline metric:
+
+| Load | relative gap | vs idle |
+|---:|---:|---:|
+| 0 | 18.5% | 1.00× |
+| 8 | 82.9% | **4.48×** |
+| 16 (K=16 probe) | 125.7% | **6.16×** |
+
+Both ratios use the idle measurement from the *same* probe configuration:
+4.48× pairs K=8 idle with K=8 loaded, and 6.16× pairs K=16 idle (20.4%) with
+K=16 loaded. Mixing the two — dividing the K=16 loaded gap by the K=8 idle gap —
+would give 6.79×, which we do not claim.
+
+**(ii) Ratio of absolute penalties** — how much more time per access is lost,
+in nanoseconds:
+
+| Load | mem0 − mem1 (ns) | vs idle |
+|---:|---:|---:|
+| 0 | 14.0 | 1.00× |
+| 8 | 137.1 | **9.8×** |
+
+This is the correct metric for a throughput-oriented decision: it is the extra
+time each access pays. It is larger than (i) because both devices get slower
+under load, so the *relative* gap grows more slowly than the *absolute* one.
+
+**(iii) Ratio of latency ratios** — how much worse the Gen4 device is relative
+to Gen5:
+
+| Load | mem0/mem1 | vs idle |
+|---:|---:|---:|
+| 0 | 1.185 | 1.00× |
+| 8 | 1.829 | **1.54×** |
+
+This is the relevant metric if the deployment compares the two devices against
+each other rather than against DRAM.
+
+**We use (i) as the primary metric** because it isolates the link's contribution
+from the overall slowdown that load causes on both devices. A reader interested
+in absolute throughput loss should use (ii), which is 9.8×, and one comparing
+the devices head-to-head should use (iii), which is 1.54×. All three are
+consistent with the same measurements; they answer different questions.
+
+**Uncertainty.** All six load levels have three repetitions. At 16 threads the
+per-repetition gaps are 126.6%, 114.6%, and 136.4% (mean 125.7%, SD 10.9),
+the widest spread of any level; a 95% t-interval on three samples spans
+roughly ±27 percentage points. At 8 threads the three repetitions give 81.9%,
+82.2%, and 86.0% (mean 82.9%, SD 2.2), a much tighter ±5 points. **The 8-thread
+figure should be quoted with confidence; the 16-thread figure should not be
+treated as more precise than ±27 points.**
+
 **The gap rises monotonically from 18.5% to 83% and plateaus between 8 and 16
-threads.** The crossing point — where the Gen4 device's disadvantage exceeds
-double its idle value — is between two and four threads.
+threads.** A single competing thread already doubles the idle gap (18.5% →
+38.6%), so the point at which idle evaluation becomes misleading is the very
+first thread, not some higher concurrency.
 
 To check whether the plateau at K = 8 is an artefact of our probe's concurrency,
 we repeat the same sweep at K = 16 (measured separately, `runs/p20261117-181603`):
@@ -426,8 +500,8 @@ magnitude by 4.5× to 6×, and the misstatement begins at two threads.**
 ![Same-device competition versus cross-socket access, K=1.](figures/fig3-interference.svg)
 
 *Figure 3: Interference decomposition. Moving the competing load onto the device
-under test costs 812 ns; moving the probe to the other socket costs 102 ns — an
-8× difference.*
+under test costs 812 ns with a local probe and 656 ns with a cross-socket probe;
+moving the probe to the other socket costs 102 ns.*
 
 Round-1 experiments (reported separately) showed local accesses degrading more
 than cross-socket ones under load — the reverse of the NUMA heuristic. We
@@ -444,48 +518,121 @@ Taking "load → DRAM, local probe" as baseline (779.9 ns):
 
 | Factor | Cost |
 |---|---:|
-| Same-device competition (load moves to node 2) | **+812.1 ns** |
+| Same-device competition, local probe (+812.1 ns) | **8.0×** the cross-socket cost |
+| Same-device competition, cross probe (+655.5 ns) | **6.4×** the cross-socket cost |
 | Same socket but cross-socket probe | **+102.0 ns** |
 
-**Same-device competition costs 8.0× more than crossing sockets.**
+On node 2 alone this reads as "same-device competition is several times more
+expensive than crossing sockets". **We then repeated the whole 2×2 on node 3,
+and the ratio did not replicate.**
 
-This answers the objection that our results are just NUMA distance in
-disguise. On this platform, moving competing traffic onto the device under test
-is eight times more expensive than moving the probe to the other socket. Locality
-of *interference* dominates locality of *topology*.
+| | K=1: local / cross | K=8: local / cross |
+|---|---:|---:|
+| node 2 (Gen4, socket 0) | 8.0× / 6.4× | 3.3× / 3.8× |
+| node 3 (Gen5, socket 1) | **1.5× / 1.0×** | **0.7× / 0.8×** |
 
-It also explains the apparent anomaly in §4.1's cross-socket rows: a cross-CXL
-probe is less affected by same-socket load than a local one, because its
-traffic never enters the loaded domain.
+The same-device effect itself is real on both devices (+364.9 and +246.4 ns at
+K=1 on node 3). What fails is the *ratio*: on node 3 at K = 8, crossing sockets
+costs **more** than same-device competition (0.7–0.8×), the opposite of node 2.
+
+The reason is that the two terms are not proportional. Between node 2 and
+node 3, the same-device effect changes by 2.2× (+812 vs +365 ns) while the
+cross-socket term changes by 2.4× in the other direction (+102 vs +245 ns).
+Their ratio is therefore a property of the device/socket pair, not a constant.
+
+**We therefore withdraw the general claim.** What the data supports is
+narrower: same-device competition has a real, device-independent *sign* — it
+always costs something — but its magnitude relative to cross-socket penalty
+ranges from 0.7× to 8.0× across the four cells we measured, and cannot be
+quoted as a single number. The earlier draft's "6.4–8.0×" was a node-2 result
+reported as though it were general.
+
+**One caveat on the numbers themselves.** +102.0 ns and +244.7 ns are
+cross-socket terms measured *under load*; the idle cross-socket penalty for the
+same device pairs is +448.7 ns (node 2) and +508.3 ns (§4.1). Load compresses
+the cross-socket penalty on node 2 far more than on node 3, and we do not
+explain that difference.
 
 ### 4.4 Is the device saturating?
 
-The gap could in principle be an artefact of one device reaching its service
-limit rather than of link bandwidth. We test by scaling out: 1, 2, 4, 16 cores,
-K = 32, cold rings, measuring aggregate throughput.
+**Short answer: we cannot rule it out.** This section explains what we could and
+could not measure, and why the question remains open.
 
-Single-core back-to-back comparison (K = 8, three repetitions each):
+The gap could in principle be an artefact of one device reaching its service
+limit rather than of link bandwidth. The clean test is to push both devices to
+their bandwidth ceiling and see whether the gap disappears (device-limited) or
+persists (link-limited).
+
+Single-core back-to-back comparison (K = 8, three repetitions each) is stable:
 
 | | r1 | r2 | r3 |
 |---|---:|---:|---:|
 | node2 (Gen4) | 16.30 M/s | 16.33 M/s | 16.19 M/s |
 | node3 (Gen5) | 20.13 M/s | 19.26 M/s | 19.50 M/s |
 
-A ratio of 1.20–1.23, consistent with the 19.8% latency gap.
+A ratio of 1.20–1.23, consistent with the 19.8% latency gap. But single core
+does not stress the link, so this says nothing about saturation.
 
-We attempted to establish absolute bandwidth ceilings by scaling to 8 and 16
-cores. **Those attempts were not reliable**: repeated runs of the same
-configuration produced 5.94, 6.91, and 7.81 GB/s for node2, and one run
-produced 20.14 GB/s — above the 15.75 GB/s theoretical maximum for Gen4 ×8,
-which is impossible. The causes are the batching described in §3.4 combined
-with per-process ring reuse under high concurrency. We therefore **do not claim
-absolute bandwidth ceilings**, and we do not use the 64 B/access conversion to
-argue that either device is or is not link-saturated.
+**Our multi-core attempts failed and we do not draw conclusions from them.**
+Repeated runs of the same 8-core configuration produced 5.94, 6.91, and
+7.81 GB/s for node2 — a 31% spread — and one 16-core run produced 20.14 GB/s,
+above the 15.75 GB/s theoretical maximum for Gen4 ×8, which is impossible. A
+throughput figure that can exceed the physical ceiling of the link it is
+supposed to be measuring is not a measurement of that link.
 
-What survives is the ratio, which is stable across every configuration we ran
-(1.20–1.37) and matches the latency ratio. We also note that neither device
-showed a plateau that would indicate device-side saturation within the range we
-could reach: throughput kept rising with core count on both.
+The likely causes are the batching described in §3.4 (effective concurrency
+below nominal K at high K) combined with per-process ring reuse, but we did not
+isolate them, and we therefore **make no claim about absolute bandwidth
+ceilings for either device**.
+
+Note that this also retracts an argument we made in an earlier draft: that the
+device could not be saturating because throughput kept rising with core count.
+That claim was based on the same unreliable numbers, and is withdrawn.
+
+**What would settle it:** per-device traffic counted by the CXL PMU while the
+aggregate access rate is swept, so that bandwidth and access rate are measured
+independently rather than inferred from a 64 B/access conversion. We did not
+complete that measurement.
+
+**Consequence for the paper's claim.** If the Gen4 device were device-limited
+rather than link-limited, the mechanism we propose would be wrong even though
+the measured gap would stand. We regard link bandwidth as the more likely
+explanation — the gap's monotonic growth with load and its 20% offset already at
+idle both fit a narrower pipe — but the experiment that would prove it is not
+in this paper.
+
+### 4.5 Ruling out socket asymmetry
+
+The comparison in §4.1–4.2 is between CPU 0 → node 2 (socket 0) and
+CPU 16 → node 3 (socket 1). Those are two different sockets, so the gap could in
+principle be socket asymmetry rather than the link.
+
+We test that with a symmetric DRAM control. DRAM links are the same on both
+sockets, so any difference between the two cells is socket-induced. Our earlier
+data had only half of the 2×2 — `CPU0→node0` and `CPU0→node1` — and never the
+mirror pair. We measured all four:
+
+| Cell | Path | K=1 (ns) | K=8 (ns) |
+|---|---|---:|---:|
+| CPU 0 → node 0 | socket 0 local DRAM | 178.7 ± 1.0 | 38.4 ± 0.2 |
+| CPU 16 → node 1 | socket 1 local DRAM | 177.9 ± 0.3 | 38.4 ± 0.1 |
+| CPU 0 → node 1 | 0 → 1 cross | 572.7 ± 1.0 | 109.9 ± 0.1 |
+| CPU 16 → node 0 | 1 → 0 cross | 581.7 ± 1.1 | 112.0 ± 1.6 |
+
+(mean ± SD, n = 3, `runs/e5-20261120-150555`)
+
+**The two sockets are equivalent for local access: −0.8 ns at K = 1 (−0.4%)
+and 0.0 ns at K = 8.** The cross-socket direction is also close to symmetric
+(+9.0 ns, +1.6% at K = 1).
+
+Against the CXL gap of 79.7 ns at K = 1, socket asymmetry accounts for at most
+**1%**. The measured device gap is therefore not a socket artefact.
+
+This control does not, however, separate the two remaining explanations: link
+speed (16 vs 32 GT/s) and device/slot identity (two different physical devices,
+root ports, and retimer paths). Separating those requires either swapping the
+devices between slots or forcing node 3 down to Gen4, neither of which we
+performed (§5.3).
 
 ---
 
@@ -493,32 +640,65 @@ could reach: throughput kept rising with core count on both.
 
 ### 5.1 For procurement and configuration
 
-A Gen5-capable CXL device that trains at Gen4 costs roughly twice as much in
-retimers, board material, and connector quality as a Gen4 design. If the
-decision is made on idle latency, the measured benefit is 18.5% — plausibly
-inside the noise band of a vendor's own characterisation, and easy to dismiss.
+If a link decision is made on idle latency, the measured deficit of the degraded
+link is 18.5% — plausibly inside the noise band of a vendor's own
+characterisation, and easy to dismiss.
 
-The benefit under load is 82.9%. **The decision flips.** Idle-latency
-evaluation is not merely imprecise; it is biased in the direction that
-systematically favours cheaper links.
+Under the three cost definitions of §4.2.1 the same measurement becomes 4.5×
+larger (ratio of gaps at eight threads), 9.8× larger (ratio of absolute
+per-access penalties), or 1.54× larger (ratio of latency ratios). Whichever
+definition a procurement process uses, the idle measurement is the smallest of
+the three and the only one that ignores load.
+
+We do not claim a cost model. We did not measure what a Gen5-capable link costs
+relative to a Gen4 one, and an earlier draft's assertion that the difference is
+"roughly twice" was unsupported and has been removed. The defensible claim is
+narrower: **idle-latency evaluation reports the smallest of the three cost
+measures, and it reports it under conditions no memory tier is deployed in.**
 
 ### 5.2 For monitoring
 
-The degradation we found was invisible to every standard check: capabilities
-advertised, target speed set, all AER counters zero, device health normal. Only
-a bandwidth-loaded microbenchmark revealed it.
+The degradation we found was invisible to error counters and to device health:
+capabilities advertised, target speed set, all AER fields zero, media status
+normal. A loaded microbenchmark revealed it.
 
-This suggests that CXL deployment checklists should include a *loaded* link
-verification, not just an idle-latency measurement or a `lspci` inspection. A
-two-minute test — K = 8 probe plus a few threads of same-device load — would
-have caught it.
+It was **not** invisible to inspection. Comparing negotiated speed against
+advertised capability shows the discrepancy immediately (§2.3), and that is
+exactly how we found it. The honest characterization is: silent to the checks
+people actually run (error logs, health status, idle latency), visible to a
+check almost nobody runs (negotiated-versus-advertised link speed).
+
+That makes the recommendation concrete and cheap: **add negotiated link speed
+to the deployment checklist, compared against advertised capability, rather than
+adding another benchmark.** A one-line comparison of two `lspci` fields would
+have caught this before any performance testing.
+
+A loaded verification remains useful for a different purpose — quantifying what
+the degradation costs — but it is not needed to *detect* it.
 
 ### 5.3 Limitations
 
-**One machine, two devices.** Our central claim is bound to a mechanism (a
-narrower link saturates earlier), not to this machine's absolute numbers. The
-crossing point and the amplification factor are the quantities most likely to
-be platform-dependent; the *existence* of the effect is not.
+**Link speed and device identity remain confounded.** This is the most serious
+limitation. The two devices differ in link speed (16 vs 32 GT/s) *and* in
+physical identity: different parts, different root ports, different retimer
+instances, different board traces. Everything we could control is controlled —
+same model, same firmware, adjacent serials, both ×8, both direct-attached, and
+the socket asymmetry ruled out by §4.5 — but we cannot exclude the possibility
+that some of the 79.7 ns idle gap is device-intrinsic rather than link-induced.
+
+The decisive controls were not performed: swapping the two devices between slots,
+or forcing node 3 down to Gen4 for a same-device 2×2. Either would separate the
+two explanations; both would destroy the comparison the rest of the paper rests
+on, so both are left to future work. **Until they are done, "the link is
+responsible" is the most likely reading, not a proven one.**
+
+Two considerations make us lean toward the link explanation. First, the gap
+grows with load, and a constant intrinsic offset would shrink in relative terms
+as both baselines rise, not grow. Second, an 80 ns idle offset is far larger
+than the 2 ns difference in serialisation time between Gen4 and Gen5 for a
+64-byte line, which suggests the mechanism is not raw transfer time but pipeline
+depth responding to the link rate — a link-rate effect, but not the one a naive
+calculation would predict.
 
 **Root cause of the downgrade is unknown.** We established that it is a
 training downgrade (capability advertised, target set, actual lower, no errors)
@@ -526,14 +706,37 @@ on a path with two retimers, and that no other device in the machine is
 affected. Narrowing further requires board documentation or a physical
 intervention that would destroy the comparison we rely on.
 
-**Absolute bandwidth numbers are unreliable** (§4.4). We report ratios only.
+**Absolute bandwidth numbers are unreliable** (§4.4), and consequently we cannot
+exclude device saturation as an alternative mechanism.
 
-**Concurrency is validated only to K = 8.** K = 16 and 32 exhibit batching; we
-label them as nominal K.
+**Concurrency is validated only to K = 8.** At K = 16 the null-hypothesis ratio
+is 1.22 and at K = 32 it is 1.68; we label those as nominal K and treat the
+125.7% figure accordingly.
 
-All six load levels in §4.2 have three repetitions. The 16-thread gap varies
-81.9–86.0% across them (mean 83.3%), the widest spread of any level, which is
-why we report the plateau as "between 8 and 16" rather than as a precise value.
+**Statistical power is low at the largest load.** All six load levels have three
+repetitions. At eight threads the gap is 81.9–86.0% (SD 2.2); at sixteen it is
+114.6–136.4% (SD 10.9), and a 95% interval on three samples spans roughly ±27
+percentage points. The 8-thread result is solid; the 16-thread result is
+indicative.
+
+**MLC's own loaded-latency mode could not be used as a cross-check.** We tried
+`--loaded_latency` on both devices (`-c`/`-j` pinned to each, `-d300`, three
+repetitions each). It reported 152.6–156.4 ns for the Gen4 device and
+312.6–319.5 ns for the Gen5 device — opposite in direction to our measurement,
+and **below its own `--idle_latency` value of 326.9 ns for the same device**
+(measured with the same `-c`/`-j`/`-b256m`). Latency cannot fall by half when
+load is added to the same path, so that mode, as we were able to drive it, is
+not measuring what we needed. Its reported bandwidth (141 GB/s) is
+system-aggregate and nearly identical for both devices, indicating that `-j`
+did not isolate the measurement to the target device. This is not a claim that
+MLC is broken; it is a statement that we could not make a controlled
+device-to-device comparison with it, and that anyone repeating this work should
+not assume its loaded mode provides one.
+
+**No application-level workload.** Every number here is a microbenchmark
+latency or throughput. An 82.9% latency gap does not imply an 82.9% application
+slowdown; the transfer function depends on the workload's MLP and on how much
+of its time is spent waiting on this memory tier. We make no end-to-end claim.
 
 ---
 
@@ -597,13 +800,71 @@ way that favoured a simpler story.
 
 Two CXL devices, identical in model and firmware, adjacent serial numbers, same
 machine. One trained at Gen4 while the system asked for Gen5, and no error was
-recorded. At idle, the degraded link costs 18.5%. Under eight threads of
-same-socket load, 82.9%. Under sixteen, 125.7%.
+recorded. At idle, the degraded link costs 18.5%. A single competing thread
+doubles that. Under eight threads it is 82.9%; under sixteen, 125.7% on a
+higher-concurrency probe.
 
 The method used to make link configuration decisions — idle latency — ranks the
-two correctly but understates the difference by a factor of 4.5 to 6. It is not
-wrong about the direction. It is wrong about the size, and it is wrong in the
-regime that matters.
+two correctly but measures the smallest of the three available cost figures:
+4.5× smaller than the ratio of gaps, 9.8× smaller than the ratio of absolute
+per-access penalties. It is not wrong about the direction. It is wrong about the
+size, and it is wrong in the regime that matters.
+
+We do not claim to have isolated link speed from device identity. That
+experiment — swapping the two devices, or forcing the faster one down to Gen4 —
+is the obvious next step, and we have described what it would settle (§5.3).
+
+---
+
+## References
+
+*Verification status is marked per entry. Entries marked [V] were confirmed
+against the source during this work; [U] were located by search but not read in
+full; [C] are cited from tool documentation. The author list and page numbers
+of [U] entries must be checked against the published version before submission.*
+
+**[1] [C]** Intel Corporation. *Memory Latency Checker v3.13 — User
+Documentation.* Sections on `--idle_latency` (buffer-size effects, `-D` block
+randomisation, `-e` prefetcher semantics), `--loaded_latency` (injection delay,
+`-d`), and `-u` histogram output. Distinguishes "idle latency, also known as
+unloaded latency" from loaded latency.
+
+**[2] [V]** Melody: systematic CXL memory characterisation at scale. ASPLOS 2025.
+265 workloads, 4 CXL type-3 devices, 7 memory latency configurations spanning
+140–410 ns, 5 platforms. Verified details: the 7 configurations comprise
+measured latencies of the four real devices (214, 239, 271, 394 ns) plus three
+NUMA-emulated points (140 and 190 ns on SKX2S, the latter via reduced uncore
+frequency; 410 ns on SKX8S). Devices run CXL 1.1 type-3; three at ×8 PCIe 5.0
+with one memory channel, one at ×16 with two. Link rate is not among the swept
+axes. *Author list to be confirmed from the published version.*
+
+**[3] [U]** Mercury: QoS-aware tiered memory with intra-tier interference
+characterisation. arXiv:2412.08938. Reports that local and CXL requests share
+the core's request handling, and that saturating one tier degrades the other.
+
+**[4] [U]** MIKU: unfair queueing analysis for heterogeneous memory. 
+arXiv:2503.17864.
+
+**[5] [U]** Tierce: observability for co-located tiered memory. SOSP 2026
+(submitted/preprint).
+
+**[6] [U]** CXL Interplay: characterisation of coexisting-workload interference
+on CXL memory. DAC 2025.
+
+**[7] [U]** End-to-end CXL load latency decomposition on Intel Xeon 6. IEEE
+Transactions on Computers, 2026. Reports CXL contributing ~26% of median load
+latency and ~90% of the variance residing in CPU-side components for
+well-tuned devices.
+
+**[8] [C]** PCI Express Base Specification, revisions covering 16.0 GT/s (Gen4)
+and 32.0 GT/s (Gen5), including the Link Control 2 "Target Link Speed" field and
+the 128b/130b encoding used in the bandwidth arithmetic of §4.4.
+
+### Removed from an earlier draft
+
+An earlier version asserted that a Gen5-capable device costs "roughly twice as
+much in retimers, board material, and connector quality" as a Gen4 design. No
+source was cited and none was found; the claim has been deleted from §5.1.
 
 ---
 

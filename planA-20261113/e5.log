@@ -1,0 +1,26 @@
+  cpu0-n0    k=1  r1    178.4 ns/acc  place=OK
+  cpu0-n0    k=8  r1     38.4 ns/acc  place=OK
+  cpu0-n1    k=1  r1    573.4 ns/acc  place=OK
+  cpu0-n1    k=8  r1    109.9 ns/acc  place=OK
+  cpu16-n1   k=1  r1    177.7 ns/acc  place=OK
+  cpu16-n1   k=8  r1     38.4 ns/acc  place=OK
+  cpu16-n0   k=1  r1    580.4 ns/acc  place=OK
+  cpu16-n0   k=8  r1    110.9 ns/acc  place=OK
+  cpu0-n0    k=1  r2    177.8 ns/acc  place=OK
+  cpu0-n0    k=8  r2     38.3 ns/acc  place=OK
+  cpu0-n1    k=1  r2    571.5 ns/acc  place=OK
+  cpu0-n1    k=8  r2    109.9 ns/acc  place=OK
+  cpu16-n1   k=1  r2    177.7 ns/acc  place=OK
+  cpu16-n1   k=8  r2     38.4 ns/acc  place=OK
+  cpu16-n0   k=1  r2    582.5 ns/acc  place=OK
+  cpu16-n0   k=8  r2    113.9 ns/acc  place=OK
+  cpu0-n0    k=1  r3    179.8 ns/acc  place=OK
+  cpu0-n0    k=8  r3     38.6 ns/acc  place=OK
+  cpu0-n1    k=1  r3    573.2 ns/acc  place=OK
+  cpu0-n1    k=8  r3    109.8 ns/acc  place=OK
+  cpu16-n1   k=1  r3    178.2 ns/acc  place=OK
+  cpu16-n1   k=8  r3     38.5 ns/acc  place=OK
+  cpu16-n0   k=1  r3    582.1 ns/acc  place=OK
+  cpu16-n0   k=8  r3    111.3 ns/acc  place=OK
+
+results: /home/hjy/tools/experiments/cxl-tail-20261109/planA-20261113/runs/e5-20261120-150555

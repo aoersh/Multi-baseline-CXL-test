@@ -1,0 +1,12 @@
+{
+  "start": "2026-11-20T15:05:55+0800",
+  "reps": 3,
+  "ks": [
+    1,
+    8
+  ],
+  "size_mb": 4096,
+  "stride": 64,
+  "samples": 943718,
+  "purpose": "symmetric DRAM baseline: isolate socket asymmetry"
+}

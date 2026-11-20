@@ -1,0 +1,5 @@
+cell,cpu,k,load_node,ns_per_access,rep,rounds,tag
+local-loadN1-k1-r1,16,1,1,624.104304555976,1,943718,local-loadN1
+local-loadN3-k1-r1,16,1,3,988.2398629214679,1,943718,local-loadN3
+cross-loadN1-k1-r1,0,1,1,863.0793511731628,1,943718,cross-loadN1
+cross-loadN3-k1-r1,0,1,3,1091.5319849140637,1,943718,cross-loadN3

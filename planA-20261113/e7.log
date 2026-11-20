@@ -1,0 +1,26 @@
+  local-loadN1   k=1  r1    618.6 ns/acc
+  local-loadN1   k=8  r1    102.1 ns/acc
+  local-loadN3   k=1  r1    979.7 ns/acc
+  local-loadN3   k=8  r1    140.4 ns/acc
+  cross-loadN1   k=1  r1    857.1 ns/acc
+  cross-loadN1   k=8  r1    160.3 ns/acc
+  cross-loadN3   k=1  r1   1096.5 ns/acc
+  cross-loadN3   k=8  r1    205.5 ns/acc
+  local-loadN1   k=1  r2    618.5 ns/acc
+  local-loadN1   k=8  r2    102.6 ns/acc
+  local-loadN3   k=1  r2    978.5 ns/acc
+  local-loadN3   k=8  r2    143.1 ns/acc
+  cross-loadN1   k=1  r2    857.7 ns/acc
+  cross-loadN1   k=8  r2    161.1 ns/acc
+  cross-loadN3   k=1  r2   1110.5 ns/acc
+  cross-loadN3   k=8  r2    206.9 ns/acc
+  local-loadN1   k=1  r3    617.5 ns/acc
+  local-loadN1   k=8  r3    102.5 ns/acc
+  local-loadN3   k=1  r3    991.1 ns/acc
+  local-loadN3   k=8  r3    143.4 ns/acc
+  cross-loadN1   k=1  r3    874.0 ns/acc
+  cross-loadN1   k=8  r3    160.8 ns/acc
+  cross-loadN3   k=1  r3   1121.1 ns/acc
+  cross-loadN3   k=8  r3    207.3 ns/acc
+
+results: /home/hjy/tools/experiments/cxl-tail-20261109/planA-20261113/runs/e7-20261120-173436

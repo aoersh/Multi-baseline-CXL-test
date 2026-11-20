@@ -1,0 +1,11 @@
+{
+  "start": "2026-11-20T17:34:36+0800",
+  "reps": 3,
+  "ks": [
+    1,
+    8
+  ],
+  "load_cpus": "17,18,19,20",
+  "probe_node": 3,
+  "purpose": "mirror E3 on node3 to test link-speed independence"
+}
