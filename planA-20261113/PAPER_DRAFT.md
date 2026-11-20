@@ -1,6 +1,6 @@
 # Silent Link Degradation in CXL Memory: Idle-Latency Evaluation Misstates Its Cost
 
-*Draft v1 — 2026-11-17. Target: ICPE (ACM SIGMETRICS).*
+*Draft v2 — 2026-11-20. Target: ICPE (ACM SIGMETRICS).*
 
 ---
 
